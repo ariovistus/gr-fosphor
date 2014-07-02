@@ -306,6 +306,7 @@ fosphor_gl_draw(struct fosphor *self, int w, int h, int wf_pos)
 	y[0] = 10.0f;
 
         /* Draw waterfall */
+	{
         float v = (float)wf_pos / 1024.0f;
 
 	fosphor_gl_cmap_enable(gl->cmap_ctx,
@@ -319,6 +320,7 @@ fosphor_gl_draw(struct fosphor *self, int w, int h, int wf_pos)
         glTexCoord2f(1.5f, v);        glVertex2f(x[1], y[1]);
         glTexCoord2f(0.5f, v);        glVertex2f(x[0], y[1]);
         glEnd();
+	}
 
 	fosphor_gl_cmap_disable();
 

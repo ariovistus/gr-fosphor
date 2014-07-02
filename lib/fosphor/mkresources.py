@@ -30,18 +30,16 @@ class ResourcePacker(object):
 		return [
 			"/* AUTO GENERATED - DO NOT MODIFY BY HAND */",
 			"#include \"resource_internal.h\"",
-			"struct resource_pack __resources[] = {",
 		]
 
 	def _file_wrap(self, name, len_, data_lines):
 		a = [
 			"\t{",
-			"\t\t.name = \"%s\"," % name,
-			"\t\t.len  = %d," % len_,
+			"\t\t\"%s\"," % name,
 		]
 
 		if len(data_lines) > 1:
-			b = [ "\t\t.data =" ]
+			b = [ "\t\t" ]
 			for l in data_lines:
 				b.append("\t\t\t" + l)
 			b[-1] += ","
@@ -49,6 +47,7 @@ class ResourcePacker(object):
 			b = [ "\t\t.data = %s," % data_lines[0] ]
 
 		c = [
+			"\t\t%d," % len_,
 			"\t},",
 		]
 
@@ -88,26 +87,58 @@ class ResourcePacker(object):
 			s += '"'
 			dl.append(s)
 		return self._file_wrap(name, len(content), dl)
+	
+	def file_char_array(self, name, content, arrname):
+		dl = []
+		dl.append("char %s[] = {\n" % arrname)
+		line = ""
+		for i in xrange(len(content)):
+			if len(line) > 70:
+				dl.append(line + "\n")
+				line = ""
+			line += "0x%x," % ord(content[i])
+		dl.append(line + "0 \n")
+		dl.append("};\n");
+		return dl
+	def file_char_ref(self, name, content, arrname):
+		return [
+			"\t{",
+			"\t\t\"%s\"," % name,
+			"\t\t%s," % arrname,
+			"\t\t%d," % len(content),
+			"\t},",
+		]
+
 
 	def footer(self):
 		return [
 			"\t/* Guard */",
-			"\t{ .name = (void*)0 }",
+			"\t{ (void*)0 }",
 			"};",
 		]
 
 	def process(self, filenames):
-		b = []
-		b.extend(self.header())
+		import platform
+		b = [
+			"struct resource_pack __resources[] = {",
+			]
+		i = 0
 		for f in filenames:
 			fh = open(f, 'rb')
 			c = fh.read()
-			if '\x00' in c:
+			if platform.system() == "Windows" and len(c) > 65000:
+				nom = "arr%s" % i
+				bb = self.file_char_array(f, c, nom)
+				b = bb + b
+				b.extend(self.file_char_ref(f, c, nom))
+				i += 1
+			elif '\x00' in c:
 				b.extend(self.file_binary(f, c))
 			else:
 				b.extend(self.file_text(f, c))
 			fh.close()
 		b.extend(self.footer())
+		b = self.header() + b
 		return b;
 
 

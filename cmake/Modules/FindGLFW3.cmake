@@ -6,6 +6,7 @@ if(NOT GLFW3_FOUND)
     PATHS
     /usr/include
     /usr/local/include
+    ${GLFW3_INCLUDE_DIR}
   )
 
   find_library(GLFW3_LIBRARIES NAMES glfw3 glfw
@@ -13,6 +14,7 @@ if(NOT GLFW3_FOUND)
     PATHS
     /usr/lib
     /usr/local/lib
+    ${GLFW3_LIBRARY_DIR}
   )
 
   if(GLFW3_INCLUDE_DIRS AND GLFW3_LIBRARIES)

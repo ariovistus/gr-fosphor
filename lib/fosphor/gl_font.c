@@ -29,6 +29,34 @@
 
 #include <errno.h>
 #include <math.h>
+#if defined(WIN32)
+// stolen from http://lists.freebsd.org/pipermail/freebsd-standards/2003-November/000287.html
+double round(double x) {
+	double t;
+	if (x >= 0.0) {
+		t = ceil(x);
+		if (t - x > 0.5) t -= 1.0;
+		return t;
+	} else {
+		t = ceil(-x);
+		if (t + x > 0.5) t -= 1.0;
+		return -t;
+	}
+}
+
+float roundf(float x) {
+	float t;
+	if (x >= 0.0) {
+		t = ceilf(x);
+		if (t - x > 0.5) t -= 1.0;
+		return t;
+	} else {
+		t = ceilf(-x);
+		if (t + x > 0.5) t -= 1.0;
+		return -t;
+	}
+}
+#endif
 #include <stdarg.h>
 #include <stdint.h>
 
@@ -106,7 +134,7 @@ glf_alloc(int height, int flags)
 
 	glf->height = height;
 	glf->flags  = flags;
-
+	
 	glGenBuffers(1, &glf->vbo);
 
 	return glf;
@@ -421,7 +449,11 @@ glf_printf(const struct gl_font *glf,
 
 	/* Grab 2 copies of the arguments */
 	va_start(va1, fmt);
+#if defined(WIN32)
+	va2 = va1;
+#else
 	va_copy(va2, va1);
+#endif
 
 	/* Print to buffer (try a stack, fallback to heap if needed) */
 	l = vsnprintf(static_buf, sizeof(static_buf), fmt, va1);

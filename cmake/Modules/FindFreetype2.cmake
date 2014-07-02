@@ -16,6 +16,7 @@ if(NOT FREETYPE2_FOUND)
     /usr
     /usr/local
     /opt/local
+    ${FREETYPE2_DIR}
     PATH_SUFFIXES
     include/freetype2
     include
@@ -85,6 +86,7 @@ if(NOT FREETYPE2_FOUND)
         /usr
         /usr/local
         /opt/local
+    	${FREETYPE2_DIR}
         PATH_SUFFIXES
         lib
 	lib64

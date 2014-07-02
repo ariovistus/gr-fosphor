@@ -55,10 +55,15 @@ void glf_draw_str(const struct gl_font *glf,
                   float y, enum glf_align y_align,
                   const char *str);
 
+#ifdef WIN32
+#define FORMAT_PRINTF_6_7 
+#else
+#define FORMAT_PRINTF_6_7 __attribute__((format(printf, 6, 7)))
+#endif
 void glf_printf(const struct gl_font *glf,
                 float x, enum glf_align x_align,
                 float y, enum glf_align y_align,
-                const char *fmt, ...) __attribute__((format(printf, 6, 7)));
+                const char *fmt, ...) FORMAT_PRINTF_6_7;
 
 void glf_begin(const struct gl_font *glf, float fg_color[3]);
 void glf_end(void);

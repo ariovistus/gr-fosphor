@@ -16,8 +16,11 @@ FIND_PATH(CPPUNIT_INCLUDE_DIRS
     NAMES cppunit/TestCase.h
     HINTS ${PC_CPPUNIT_INCLUDE_DIR}
     PATHS
-    /usr/local/include
-    /usr/include
+    /usr/local
+    /usr
+    ${CPPUNIT_DIR}
+    PATH_SUFFIXES
+    include
 )
 
 FIND_LIBRARY(CPPUNIT_LIBRARIES
@@ -27,6 +30,7 @@ FIND_LIBRARY(CPPUNIT_LIBRARIES
     ${CPPUNIT_INCLUDE_DIRS}/../lib
     /usr/local/lib
     /usr/lib
+    ${CPPUNIT_DIR}
 )
 
 LIST(APPEND CPPUNIT_LIBRARIES ${CMAKE_DL_LIBS})

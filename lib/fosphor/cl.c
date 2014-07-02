@@ -388,7 +388,7 @@ cl_do_init(struct fosphor *self)
 	ctx_props[1] = (cl_context_properties) CGLGetShareGroup(CGLGetCurrentContext());
 	ctx_props[2] = 0;
 
-#elif defined(__WIN32__)
+#elif defined(__WIN32__) || defined(_WIN32)
 
 		/* Win 32 variant */
 	ctx_props[0] = CL_GL_CONTEXT_KHR;
@@ -500,6 +500,7 @@ cl_do_init(struct fosphor *self)
 	CL_ERR_CHECK(err, "Unable to create display kernel");
 
 	/* Configure static display kernel args */
+	{
 	cl_uint fft_log2_len = FOSPHOR_FFT_LEN_LOG;
 	cl_float histo_t0r   = 16.0f;
 	cl_float histo_t0d   = 1024.0f;
@@ -522,6 +523,7 @@ cl_do_init(struct fosphor *self)
 
 	/* All done */
 	err = 0;
+	}
 
 error:
 	return err;

@@ -100,8 +100,13 @@ done:
 	rgb[2] = b;
 }
 
+#ifdef WIN32
+#define INLINE __inline
+#else
+#define INLINE inline
+#endif
 
-static inline void
+static INLINE void
 _set_rgba_from_hsv(uint32_t *rgba, float h, float s, float v)
 {
 		float hsv[3], rgb[3];

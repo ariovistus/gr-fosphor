@@ -43,13 +43,17 @@ struct llist_head {
 
 #define LLIST_HEAD(name) \
 	struct llist_head name = LLIST_HEAD_INIT(name)
-
+#ifdef WIN32
+#define INLINE __inline
+#else
+#define INLINE inline
+#endif
 /**
  * \brief Add a new entry after the specified head
  * \param[in] new  new entry to be added
  * \param[in] head llist head to add it after
  */
-static inline void llist_add(struct llist_head *_new, struct llist_head *head)
+static INLINE void llist_add(struct llist_head *_new, struct llist_head *head)
 {
 	head->next->prev = _new;
 	_new->next = head->next;
@@ -61,7 +65,7 @@ static inline void llist_add(struct llist_head *_new, struct llist_head *head)
  * \brief Deletes entry from llist
  * \param[in] entry the element to delete from the llist
  */
-static inline void llist_del(struct llist_head *entry)
+static INLINE void llist_del(struct llist_head *entry)
 {
 	entry->next->prev = entry->prev;
 	entry->prev->next = entry->next;

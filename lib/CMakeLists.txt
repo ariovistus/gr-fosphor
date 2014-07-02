@@ -24,19 +24,34 @@ include(GrPlatform) #define LIB_SUFFIX
 include(GrMiscUtils)
 
 find_package(PythonInterp 2)
+find_package(GLEW)
 
-add_custom_command(
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/fosphor
-  OUTPUT fosphor/resource_data.c
-  DEPENDS fosphor/fft.cl fosphor/display.cl fosphor/cmap_simple.glsl fosphor/cmap_bicubic.glsl fosphor/cmap_fallback.glsl fosphor/DroidSansMonoDotted.ttf
-  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/fosphor/
-  COMMAND cp llist.h resource_internal.h ${CMAKE_CURRENT_BINARY_DIR}/fosphor/
-  COMMAND ${PYTHON_EXECUTABLE} -B mkresources.py fft.cl display.cl cmap_simple.glsl cmap_bicubic.glsl cmap_fallback.glsl DroidSansMonoDotted.ttf > ${CMAKE_CURRENT_BINARY_DIR}/fosphor/resource_data.c
-)
+if(WIN32)
+  STRING(REPLACE "/" "\\" WIN_CURRENT_BINARY_DIR  ${CMAKE_CURRENT_BINARY_DIR}/fosphor/)
+  add_custom_command(
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/fosphor
+    OUTPUT fosphor/resource_data.c
+    DEPENDS fosphor/fft.cl fosphor/display.cl fosphor/cmap_simple.glsl fosphor/cmap_bicubic.glsl fosphor/cmap_fallback.glsl fosphor/DroidSansMonoDotted.ttf
+    COMMAND if not exist ${WIN_CURRENT_BINARY_DIR} mkdir ${WIN_CURRENT_BINARY_DIR}
+    COMMAND copy llist.h ${WIN_CURRENT_BINARY_DIR}
+    COMMAND copy resource_internal.h ${WIN_CURRENT_BINARY_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} -B mkresources.py fft.cl display.cl cmap_simple.glsl cmap_bicubic.glsl cmap_fallback.glsl DroidSansMonoDotted.ttf > ${CMAKE_CURRENT_BINARY_DIR}/fosphor/resource_data.c
+  )
+else()
+  add_custom_command(
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/fosphor
+    OUTPUT fosphor/resource_data.c
+    DEPENDS fosphor/fft.cl fosphor/display.cl fosphor/cmap_simple.glsl fosphor/cmap_bicubic.glsl fosphor/cmap_fallback.glsl fosphor/DroidSansMonoDotted.ttf
+    COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/fosphor/
+    COMMAND cp llist.h resource_internal.h ${CMAKE_CURRENT_BINARY_DIR}/fosphor/
+    COMMAND ${PYTHON_EXECUTABLE} -B mkresources.py fft.cl display.cl cmap_simple.glsl cmap_bicubic.glsl cmap_fallback.glsl DroidSansMonoDotted.ttf > ${CMAKE_CURRENT_BINARY_DIR}/fosphor/resource_data.c
+  )
+endif(WIN32)
 
 include_directories(
 	${OPENGL_INCLUDE_DIRS}
 	${OPENCL_INCLUDE_DIRS}
+	${GLEW_INCLUDE_DIRS}
 	${FREETYPE2_INCLUDE_DIRS}
 	${Boost_INCLUDE_DIR}
 )
@@ -87,6 +102,12 @@ list(APPEND fosphor_libraries
 	${Boost_LIBRARIES}
 	${GNURADIO_ALL_LIBRARIES}
 )
+
+if(WIN32)
+	list(APPEND fosphor_libraries 
+		${GLEW_LIBRARY}
+	)
+endif(WIN32)
 
 list_cond_append(ENABLE_PYTHON fosphor_libraries ${PYTHON_LIBRARY})
 list_cond_append(ENABLE_GLFW fosphor_libraries ${GLFW3_LIBRARIES})

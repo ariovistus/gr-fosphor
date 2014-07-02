@@ -41,7 +41,7 @@ function(GR_MODULE EXTVAR PCNAME INCFILE LIBFILE)
 
     LIST_CONTAINS(REQUIRED_MODULE ${EXTVAR} ${GR_REQUIRED_COMPONENTS})
     if(NOT REQUIRED_MODULE)
-        #message("Ignoring GNU Radio Module ${EXTVAR}")
+	 #message("Ignoring GNU Radio Module ${EXTVAR}")
         return()
     endif()
 
@@ -83,10 +83,16 @@ function(GR_MODULE EXTVAR PCNAME INCFILE LIBFILE)
                   /usr/local/lib64
                   /usr/lib
                   /usr/lib64
+		  ${GNURADIO_LIBRARY_DIR}
         )
 	list(APPEND ${LIBVAR_NAME} ${${LIBVAR_NAME}_${libname}})
     endforeach(libname)
 
+    set(GNURADIO_${EXTVAR}_INCLUDE_DIRS ${GNURADIO_INCLUDE_DIR})
+    if(WIN32)
+    else()
+    	set(GNURADIO_${EXTVAR}_LIBRARIES ${GNURADIO_LIBRARY_DIR})
+    endif(WIN32)
     # show results
     message(" * INCLUDES=${GNURADIO_${EXTVAR}_INCLUDE_DIRS}")
     message(" * LIBS=${GNURADIO_${EXTVAR}_LIBRARIES}")

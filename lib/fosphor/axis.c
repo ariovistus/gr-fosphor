@@ -31,6 +31,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#if defined(WIN32)
+double round(double x);
+#endif
 
 #include "axis.h"
 

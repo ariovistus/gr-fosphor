@@ -28,7 +28,11 @@
  */
 
 #include <stdint.h>
+#include <stdio.h>
 #include <math.h>
+#if defined(WIN32)
+float roundf(float x);
+#endif
 
 #include "gl_cmap_gen.h"
 

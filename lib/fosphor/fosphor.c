@@ -36,6 +36,9 @@
 #include "gl.h"
 #include "fosphor.h"
 #include "private.h"
+#if defined(WIN32)
+#include <GLFW/glfw3.h>
+#endif
 
 
 struct fosphor *
@@ -43,6 +46,10 @@ fosphor_init(void)
 {
 	struct fosphor *self;
 	int rv;
+	
+#if defined(WIN32)
+	glewInit();
+#endif
 		
 	/* Allocate structure */
 	self = malloc(sizeof(struct fosphor));
